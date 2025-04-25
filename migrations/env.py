@@ -1,11 +1,10 @@
-import os
 from logging.config import fileConfig
 
 from alembic import context
-from sqlalchemy import engine_from_config, pool
 from sqlmodel import SQLModel, create_engine
 
-from src.model.note import Note
+from src.model.note import Note  # noqa: F401
+from src.model.user import User  # noqa: F401
 from src.settings import POSTGRES_URL
 
 # this is the Alembic Config object, which provides

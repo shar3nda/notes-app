@@ -1,6 +1,7 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, func, select
 
+from src.auth.user import get_current_user
 from src.db.common import engine
 from src.model.note import Note, NoteCreate, NoteRead, NoteReadShort, NoteUpdate
 
@@ -8,6 +9,7 @@ router = APIRouter(
     prefix="/notes",
     tags=["notes"],
     responses={404: {"description": "Not found"}},
+    dependencies=[Depends(get_current_user)],
 )
 
 
