@@ -2,7 +2,7 @@ from datetime import datetime
 
 from sqlmodel import Field, SQLModel
 
-from src.db.common import created_at, updated_at
+from db.common import created_at, updated_at
 
 
 class NoteBase(SQLModel):

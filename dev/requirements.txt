@@ -1,5 +1,8 @@
 fastapi[standard]==0.115.12
+passlib[bcrypt]==1.7.4
 psycopg[binary]==3.2.6
+pyjwt[crypto]==2.10.1
 python-dotenv==1.1.0
 ruff==0.11.5
 sqlmodel==0.0.24
+alembic==1.15.2

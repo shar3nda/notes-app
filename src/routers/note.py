@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from sqlmodel import Session, func, select
 
-from src.db.common import engine
-from src.model.note import Note, NoteCreate, NoteRead, NoteReadShort, NoteUpdate
+from db.common import engine
+from model.note import Note, NoteCreate, NoteRead, NoteReadShort, NoteUpdate
 
 router = APIRouter(
     prefix="/notes",

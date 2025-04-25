@@ -2,13 +2,13 @@
 
 from sqlmodel import Session
 
-from src.settings import RUN_MODE, RunMode
+from settings import RUN_MODE, RunMode
 
 if RUN_MODE != RunMode.DEVELOPMENT:
     raise Exception("Database seeding is only allowed in development mode.")
 
-from src.db.common import engine
-from src.model.note import Note
+from db.common import engine
+from model.note import Note
 
 
 def seed_db():

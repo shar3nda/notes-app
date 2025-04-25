@@ -1,6 +1,6 @@
 from sqlmodel import Column, DateTime, Field, create_engine, func
 
-from src.settings import POSTGRES_URL
+from settings import POSTGRES_URL
 
 
 def created_at() -> Field:
