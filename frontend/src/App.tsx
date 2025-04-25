@@ -25,7 +25,7 @@ function NoteList({
   selectedNoteId: number | null;
 }) {
   return (
-    <VStack align="stretch" p={2} overflowY="auto" w="100%">
+    <VStack align="stretch" p={2} paddingTop={0} overflowY="auto" w="100%">
       {notes.map((note) => {
         const isSelected = note.id === selectedNoteId;
         return (
@@ -43,7 +43,7 @@ function NoteList({
               {note.title || "Untitled"}
             </Text>
             <Text fontSize="sm" lineClamp={1}>
-              {note.content || "No content"}
+              {note.content || "<No content>"}
             </Text>
           </Box>
         );
@@ -121,13 +121,19 @@ const App = () => {
     },
   });
   const { mutate: updateNote } = $api.useMutation("put", "/notes/{note_id}", {
-    onSuccess: () => toaster.create({ title: "Note updated", type: "info" }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["get", "/notes/"] });
+      toaster.create({ title: "Note updated", type: "info" });
+    },
   });
   const { mutate: deleteNote } = $api.useMutation(
     "delete",
     "/notes/{note_id}",
     {
-      onSuccess: () => toaster.create({ title: "Note deleted", type: "info" }),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["get", "/notes/"] });
+        toaster.create({ title: "Note deleted", type: "info" });
+      },
     },
   );
 
@@ -150,7 +156,9 @@ const App = () => {
     <>
       <Flex h="100vh">
         <VStack w="30%">
-          <Button onClick={handleCreate}>New Note</Button>
+          <Button onClick={handleCreate} marginTop={2}>
+            New Note
+          </Button>
           {notes && (
             <NoteList
               notes={notes}
