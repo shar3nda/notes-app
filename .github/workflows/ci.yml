@@ -93,10 +93,10 @@ jobs:
       contents: read
       id-token: write
     env:
-      TOKEN: ${{ secrets.SECRET_KEY }}
-      DB_USER: ${{ secrets.POSTGRES_USER }}
-      DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-      KUBECONFIG: ${{ secrets.KUBECONFIG }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      KUBECONFIG_CONTENT: ${{ secrets.KUBECONFIG_CONTENT }}
       TAG: ${{ needs.ci.outputs.tag }}
 
     steps:
@@ -110,8 +110,8 @@ jobs:
 
       - name: Set up kubeconfig
         run: |
-          echo "${{ secrets.KUBECONFIG }}" | base64 -d > kubeconfig
-          export KUBECONFIG=kubeconfig
+          echo "${{ secrets.KUBECONFIG_CONTENT }}" | base64 -d > kubeconfig
+          export KUBECONFIG=$PWD/kubeconfig
 
       - name: Apply Kubernetes manifests
         run: |
