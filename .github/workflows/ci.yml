@@ -14,7 +14,17 @@ jobs:
     - name: Start containers
       run: docker compose up -d --build --wait notes-app-db notes-app-api
     - name: Backend healthcheck
-      run: curl http://localhost:8000/api/v1/utils/ping
+      run: |
+        for i in {1..5}; do
+          if curl -f http://localhost:8000/api/v1/utils/ping; then
+            echo "Backend healthcheck OK!"
+            exit 0
+          fi
+          echo "Backend not healthy, retrying in 2s..."
+          sleep 2
+        done
+        echo "Backend healthcheck FAILED!"
+        exit 1
     - name: Stop containers
       if: always()
       run: docker compose down -v --remove-orphans
