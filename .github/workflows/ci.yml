@@ -38,7 +38,6 @@ jobs:
         run: |
           cd frontend
           npm run format-check
-          npm run generate-api-check
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -75,7 +74,10 @@ jobs:
           exit 1
 
       - name: Check if migrations are up to date
-        run: alembic check
+        run: |
+          alembic check
+          cd frontend
+          npm run generate-api-check
 
       - name: Run backend tests
         run: |
