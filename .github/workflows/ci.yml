@@ -62,6 +62,7 @@ jobs:
 
       - name: Backend healthcheck
         run: |
+          sleep 5
           for i in {1..5}; do
             if curl -f http://localhost:8000/api/v1/utils/ping; then
               echo "Backend healthcheck OK!"
@@ -75,6 +76,7 @@ jobs:
 
       - name: Check if migrations are up to date
         run: |
+          export RUN_MODE=test
           alembic check
           cd frontend
           npm run generate-api-check
