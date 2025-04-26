@@ -96,7 +96,6 @@ jobs:
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
       POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-      KUBECONFIG_CONTENT: ${{ secrets.KUBECONFIG_CONTENT }}
       TAG: ${{ needs.ci.outputs.tag }}
 
     steps:
@@ -109,16 +108,13 @@ jobs:
           version: "latest"
 
       - name: Set up kubeconfig
-        run: |
-          echo "${{ secrets.KUBECONFIG_CONTENT }}" | base64 -d > kubeconfig
-          export KUBECONFIG=$PWD/kubeconfig
+        uses: azure/k8s-set-context@v4
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBECONFIG_CONTENT }}
 
       - name: Apply Kubernetes manifests
         run: |
           for file in k8s/*.yaml; do
             deploy/jinja_render.py < "$file" | kubectl apply -f -
           done
-
-      - name: Clean up kubeconfig
-        if: always()
-        run: rm -f kubeconfig
