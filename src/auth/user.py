@@ -57,6 +57,8 @@ def is_allowed_username(u: str) -> str:
         raise ValueError("Username must be at least 3 characters long")
     if len(u) > 50:
         raise ValueError("Username must be no more than 50 characters long")
+    if not u.isalnum():
+        raise ValueError("Username must contain only numbers and digits")
     return u
 
 
