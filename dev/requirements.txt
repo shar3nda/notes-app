@@ -2,9 +2,10 @@ alembic==1.15.2
 asgi-correlation-id==4.3.4
 bcrypt==4.3.0
 fastapi[standard]==0.115.12
+jinja2==3.1.6
 psycopg[binary]==3.2.6
+pytest==8.3.5
 python-dotenv==1.1.0
 python-jose[cryptography]==3.4.0
 ruff==0.11.5
 sqlmodel==0.0.24
-pytest==8.3.5

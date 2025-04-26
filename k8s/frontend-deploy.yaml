@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notes-app-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notes-app-frontend
+  template:
+    metadata:
+      labels:
+        app: notes-app-frontend
+    spec:
+      containers:
+        - name: nginx
+          image: "ghcr.io/shar3nda/notes-app-frontend:{{ TAG }}"
+          ports:
+            - containerPort: 80

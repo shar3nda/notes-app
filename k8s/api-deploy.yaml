@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notes-app-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notes-app-api
+  template:
+    metadata:
+      labels:
+        app: notes-app-api
+    spec:
+      containers:
+        - name: notes-app-api
+          image: "ghcr.io/shar3nda/notes-app-api:{{ TAG }}"
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - secretRef:
+                name: notes-app-api-env
+          readinessProbe:
+            httpGet:
+              path: /api/v1/utils/ping
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      initContainers:
+        - name: migrate
+          image: "ghcr.io/shar3nda/notes-app-api:{{ TAG }}"
+          command: ["/bin/bash"]
+          args: ["-c", "cd /app/; alembic upgrade head"]
+          envFrom:
+            - secretRef:
+                name: notes-app-api-env

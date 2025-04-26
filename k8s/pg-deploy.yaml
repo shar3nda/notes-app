@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notes-app-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notes-app-db
+  template:
+    metadata:
+      labels:
+        app: notes-app-db
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:17.4-bookworm
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - secretRef:
+                name: notes-app-db-env
+          volumeMounts:
+            - name: pgdata
+              mountPath: /var/lib/postgresql/data
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - "-d"
+                - "$(POSTGRES_DB)"
+                - "-U"
+                - "$(POSTGRES_USER)"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 5
+      volumes:
+        - name: pgdata
+          persistentVolumeClaim:
+            claimName: pgdata
