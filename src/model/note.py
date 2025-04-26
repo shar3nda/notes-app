@@ -10,7 +10,11 @@ class NoteBase(SQLModel):
     content: str
 
 
-class Note(NoteBase, table=True):
+class NoteDBBase(NoteBase):
+    user_id: int = Field(foreign_key="user.id")
+
+
+class Note(NoteDBBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     created_at: datetime = created_at()
     updated_at: datetime = updated_at()

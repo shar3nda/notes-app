@@ -3,7 +3,7 @@
 import random
 import string
 
-from sqlmodel import Session
+from sqlmodel import Session, select
 
 from src.settings import RUN_MODE, RunMode
 
@@ -19,6 +19,8 @@ from src.model.user import User
 def seed_db():
     Note.metadata.drop_all(engine)
     Note.metadata.create_all(engine)
+    User.metadata.drop_all(engine)
+    User.metadata.create_all(engine)
 
     with Session(engine) as session:
         users = [
@@ -26,25 +28,32 @@ def seed_db():
                 username=f"user{i}",
                 hashed_password=hash_password(f"password{i}"),
             )
-            for i in range(10)
+            for i in range(1, 6)
         ]
-        notes = [
-            Note(
-                title=f"Note {i}",
-                content=f"This is the content of note {i}. "
-                + "".join(
-                    random.choices(
-                        string.ascii_letters + string.digits + " " * 10,
-                        k=100,
-                    )
-                ),
-            )
-            for i in range(30)
-        ]
-
         session.add_all(users)
-        session.add_all(notes)
+        session.commit()
 
+        users = session.exec(select(User)).all()
+        notes = []
+        for user in users:
+            notes.extend(
+                [
+                    Note(
+                        title=f"Note {i}",
+                        content=f"This is the content of note {i}. "
+                        + "".join(
+                            random.choices(
+                                string.ascii_letters + string.digits + " " * 10,
+                                k=100,
+                            )
+                        ),
+                        user_id=user.id,
+                    )
+                    for i in range(1, 31)
+                ]
+            )
+
+        session.add_all(notes)
         session.commit()
 
 

@@ -4,6 +4,7 @@ from sqlmodel import Session, func, select
 from src.auth.user import get_current_user
 from src.db.common import engine
 from src.model.note import Note, NoteCreate, NoteRead, NoteReadShort, NoteUpdate
+from src.model.user import User
 
 router = APIRouter(
     prefix="/notes",
@@ -14,8 +15,8 @@ router = APIRouter(
 
 
 @router.post("/", response_model=NoteRead)
-def create_note(note_create: NoteCreate):
-    note = Note(**note_create.model_dump())
+def create_note(note_create: NoteCreate, user: User = Depends(get_current_user)):
+    note = Note(**note_create.model_dump(), user_id=user.id)
     with Session(engine) as session:
         session.add(note)
         session.commit()
@@ -24,7 +25,7 @@ def create_note(note_create: NoteCreate):
 
 
 @router.get("/", response_model=list[NoteRead])
-def get_notes():
+def get_notes(user: User = Depends(get_current_user)):
     with Session(engine) as session:
         stmt = select(
             Note.id,
@@ -32,25 +33,30 @@ def get_notes():
             func.substring(Note.content, 1, 50).label("content"),
             Note.updated_at,
             Note.created_at,
-        ).order_by(Note.updated_at.desc())
+        ).where(Note.user_id == user.id)
+        stmt = stmt.order_by(Note.updated_at.desc())
         result = session.exec(stmt).all()
         return result
 
 
 @router.get("/{note_id}", response_model=NoteRead)
-def get_note(note_id: int):
+def get_note(note_id: int, user: User = Depends(get_current_user)):
     with Session(engine) as session:
         note = session.get(Note, note_id)
-        if not note:
+        if not note or note.user_id != user.id:
             raise HTTPException(status_code=404, detail="Note not found")
         return note
 
 
 @router.put("/{note_id}", response_model=NoteRead)
-def update_note(note_id: int, updated_note: NoteUpdate):
+def update_note(
+    note_id: int,
+    updated_note: NoteUpdate,
+    user: User = Depends(get_current_user),
+):
     with Session(engine) as session:
         db_note = session.get(Note, note_id)
-        if not db_note:
+        if not db_note or db_note.user_id != user.id:
             raise HTTPException(status_code=404, detail="Note not found")
         note_data = updated_note.model_dump(exclude_unset=True)
         db_note.sqlmodel_update(note_data)
@@ -61,10 +67,10 @@ def update_note(note_id: int, updated_note: NoteUpdate):
 
 
 @router.delete("/{note_id}", response_model=NoteReadShort)
-def delete_note(note_id: int):
+def delete_note(note_id: int, user: User = Depends(get_current_user)):
     with Session(engine) as session:
         note = session.get(Note, note_id)
-        if not note:
+        if not note or note.user_id != user.id:
             raise HTTPException(status_code=404, detail="Note not found")
         session.delete(note)
         session.commit()
