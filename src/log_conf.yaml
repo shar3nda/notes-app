@@ -1,0 +1,37 @@
+version: 1
+disable_existing_loggers: false
+filters:
+  correlation_id:
+    "()": asgi_correlation_id.CorrelationIdFilter
+    uuid_length: 32
+    default_value: "-"
+formatters:
+  default:
+    class: src.utils.logger.LogfmtFormatter
+    datefmt: "%H:%M:%S"
+handlers:
+  default:
+    class: logging.StreamHandler
+    filters:
+    - correlation_id
+    formatter: default
+loggers:
+  asgi_correlation_id:
+    handlers:
+    - default
+    level: WARNING
+  uvicorn.access:
+    level: INFO
+    handlers:
+      - default
+    propagate: no
+  uvicorn.error:
+    level: INFO
+    handlers:
+      - default
+    propagate: no
+root:
+  level: INFO
+  handlers:
+    - default
+  propagate: no
