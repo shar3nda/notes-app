@@ -12,7 +12,7 @@ jobs:
       uses: actions/checkout@v4
     - run: docker compose down -v --remove-orphans
     - name: Start containers
-      run: docker-compose up -d --build --wait notes-app-db notes-app-api
+      run: docker compose up -d --build --wait notes-app-db notes-app-api
     - name: Backend healthcheck
       run: curl http://localhost:8000/api/v1/utils/ping
     - name: Stop containers
