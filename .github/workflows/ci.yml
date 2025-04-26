@@ -77,13 +77,12 @@ jobs:
       - name: Run backend tests
         run: |
           export RUN_MODE=test
-          python3 -m pytest
-
-      - name: Check if migrations are up to date
-        run: |
-          export RUN_MODE=test
           alembic upgrade head
           alembic check
+          python3 -m pytest
+
+      - name: Check if schemas are up to date
+        run: |
           cd frontend
           npm run generate-api-check
 
