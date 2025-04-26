@@ -12,5 +12,6 @@ COPY ./requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
 
 COPY ./src /app/src
+COPY ./alembic.ini /app/src/alembic.ini
 
 CMD ["uvicorn", "src.main:app", "--log-config", "src/log_conf.yaml", "--host", "0.0.0.0", "--workers", "1"]
