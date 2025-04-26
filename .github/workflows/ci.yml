@@ -81,7 +81,7 @@ jobs:
 
       - name: Check if migrations are up to date
         run: |
-          export RUN_MODE=test
+          export RUN_MODE=dev
           alembic check
           cd frontend
           npm run generate-api-check
