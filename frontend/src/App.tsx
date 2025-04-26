@@ -262,9 +262,7 @@ const App = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Button onClick={handleAuth} type="submit">
-            {isRegister ? "Register" : "Login"}
-          </Button>
+          <Button type="submit">{isRegister ? "Register" : "Login"}</Button>
           <Button
             onClick={() => setIsRegister((r) => !r)}
             variant="outline"
