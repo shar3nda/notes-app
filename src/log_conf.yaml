@@ -7,8 +7,8 @@ filters:
     default_value: "-"
 formatters:
   default:
-    class: src.utils.logger.LogfmtFormatter
-    datefmt: "%H:%M:%S"
+    class: src.utils.logger.LogFormatter
+    format: "%(levelname)s:\t\b%(asctime)s %(name)s:%(lineno)d [%(correlation_id)s] %(message)s"
 handlers:
   default:
     class: logging.StreamHandler
@@ -20,6 +20,10 @@ loggers:
     handlers:
     - default
     level: WARNING
+  src:
+    handlers:
+    - default
+    level: INFO
   uvicorn.access:
     level: INFO
     handlers:
