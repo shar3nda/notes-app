@@ -29,7 +29,7 @@ spec:
               command:
                 - pg_isready
                 - "-d"
-                - "{{ POSTGRES_DB }}"
+                - "app"
                 - "-U"
                 - "{{ POSTGRES_USER }}"
             initialDelaySeconds: 30
