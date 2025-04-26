@@ -17,7 +17,9 @@ cd frontend
 npm install
 ```
 
-## Запуск
+## Запуск бэкенда
+
+### Локально
 
 ```sh
 dev/start-db.sh
@@ -28,6 +30,16 @@ python3 -m src.scripts.seed
 ```sh
 uvicorn src.main:app --reload --log-config src/log_conf.yaml
 ```
+
+### Локально - Docker Compose
+
+```sh
+docker compose up -d --build
+alembic upgrade head
+python3 -m src.scripts.seed
+```
+
+## Запуск фронтэнда
 
 ```sh
 cd frontend
