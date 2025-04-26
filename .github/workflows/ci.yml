@@ -36,6 +36,7 @@ jobs:
 
       - name: Check frontend linting and formatting
         run: |
+          cd frontend
           npm run format-check
           npm run generate-api-check
 
