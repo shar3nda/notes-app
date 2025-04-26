@@ -50,3 +50,25 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> Use
     if user is None:
         raise credentials_exception
     return user
+
+
+def is_allowed_username(u: str) -> str:
+    if len(u) < 3:
+        raise ValueError("Username must be at least 3 characters long")
+    if len(u) > 50:
+        raise ValueError("Username must be no more than 50 characters long")
+    return u
+
+
+def is_strong_password(p: str) -> str:
+    if len(p) < 8:
+        raise ValueError("Password must be at least 8 characters long")
+    if len(p) > 50:
+        raise ValueError("Password must be no more than 50 characters long")
+    if not any(c.isdigit() for c in p):
+        raise ValueError("Password must contain at least one number")
+    if not any(c.islower() for c in p):
+        raise ValueError("Password must contain at least one lowercase letter")
+    if not any(c.isupper() for c in p):
+        raise ValueError("Password must contain at least one uppercase letter")
+    return p

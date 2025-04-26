@@ -9,7 +9,12 @@ from src.auth.crypto import (
     get_new_access_token,
     hash_password,
 )
-from src.auth.user import authenticate_user, get_user
+from src.auth.user import (
+    authenticate_user,
+    get_user,
+    is_allowed_username,
+    is_strong_password,
+)
 from src.db.common import engine
 from src.model.token import Token
 from src.model.user import AuthForm, User, UserCreate
@@ -23,6 +28,15 @@ router = APIRouter(
 
 @router.post("/register")
 def register(user: UserCreate) -> Token:
+    try:
+        user = UserCreate(**user.model_dump())
+        is_allowed_username(user.username)
+        is_strong_password(user.password)
+    except ValueError as e:
+        raise HTTPException(
+            status_code=422,
+            detail=str(e),
+        )
     if get_user(user.username):
         raise HTTPException(status_code=400, detail="Username taken")
     hashed = hash_password(user.password)
