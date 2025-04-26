@@ -76,8 +76,10 @@ jobs:
 
       - name: Run backend tests
         run: |
-          export RUN_MODE=test
+          export RUN_MODE=dev
+          alembic upgrade head
           alembic check
+          export RUN_MODE=test
           python3 -m pytest
 
       - name: Check if schemas are up to date
