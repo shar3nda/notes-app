@@ -13,4 +13,7 @@
             "source.fixAll": "explicit",
         }
     },
+    "[yaml]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
 }
