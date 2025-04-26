@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: notes-app-frontend
+  namespace: notes-app
 spec:
   selector:
     app: notes-app-frontend
