@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
-import jinja2
 import os
 import sys
+
+import jinja2
 
 env = jinja2.Environment()
 template = env.from_string(sys.stdin.read())
