@@ -74,17 +74,17 @@ jobs:
           echo "Backend healthcheck FAILED!"
           exit 1
 
+      - name: Run backend tests
+        run: |
+          export RUN_MODE=test
+          python3 -m pytest
+
       - name: Check if migrations are up to date
         run: |
           export RUN_MODE=test
           alembic check
           cd frontend
           npm run generate-api-check
-
-      - name: Run backend tests
-        run: |
-          export RUN_MODE=test
-          python3 -m pytest
 
       - name: Stop containers
         if: always()
