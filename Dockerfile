@@ -13,5 +13,6 @@ RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
 
 COPY ./src /app/src
 COPY ./alembic.ini /app/alembic.ini
+COPY ./migrations /app/migrations
 
 CMD ["uvicorn", "src.main:app", "--log-config", "src/log_conf.yaml", "--host", "0.0.0.0", "--workers", "1"]
