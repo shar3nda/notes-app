@@ -1,0 +1,20 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  ci:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - run: docker compose down -v --remove-orphans
+    - name: Start containers
+      run: docker-compose up -d --build --wait notes-app-db notes-app-api
+    - name: Backend healthcheck
+      run: curl http://localhost:8000/api/v1/utils/ping
+    - name: Stop containers
+      if: always()
+      run: docker compose down -v --remove-orphans
