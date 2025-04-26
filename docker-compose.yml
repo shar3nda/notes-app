@@ -1,0 +1,29 @@
+services:
+  notes-app-db:
+    image: postgres:17.4-bookworm
+    restart: always
+    env_file:
+      - src/.env.compose.dev
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  notes-app-api:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      notes-app-db:
+        condition: service_healthy
+    env_file:
+      - src/.env.compose.dev
+
+volumes:
+  pgdata:

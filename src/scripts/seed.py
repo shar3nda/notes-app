@@ -7,7 +7,7 @@ from sqlmodel import Session
 
 from src.settings import RUN_MODE, RunMode
 
-if RUN_MODE != RunMode.DEVELOPMENT:
+if RUN_MODE != RunMode.DEV:
     raise Exception("Database seeding is only allowed in development mode.")
 
 from src.auth.crypto import hash_password
