@@ -24,6 +24,21 @@ jobs:
         id: set_tag
         run: echo "tag=${GITHUB_SHA::8}" >> $GITHUB_OUTPUT
 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          npm install
+
+      - name: Check frontend linting and formatting
+        run: |
+          npm run format-check
+          npm run generate-api-check
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -57,6 +72,9 @@ jobs:
           done
           echo "Backend healthcheck FAILED!"
           exit 1
+
+      - name: Check if migrations are up to date
+        run: alembic check
 
       - name: Run backend tests
         run: |

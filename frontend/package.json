@@ -6,10 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "biome check --error-on-warnings",
-    "format": "biome check --write",
+    "format": "prettier . --write",
+    "format-check": "prettier . --check",
     "preview": "vite preview",
-    "generate-api": "openapi-typescript http://localhost:8000/api/v1/openapi.json --output src/api-gen.ts"
+    "generate-api": "openapi-typescript http://localhost:8000/api/v1/openapi.json --output src/api-gen.ts",
+    "generate-api-check": "openapi-typescript http://localhost:8000/api/v1/openapi.json --output src/api-gen.ts  --check"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.15.1",

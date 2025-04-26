@@ -24,18 +24,21 @@ npm install
 ### Локально
 
 ```sh
+export RUN_MODE=dev
 dev/start-db.sh
 alembic upgrade head
 python3 -m src.scripts.seed
 ```
 
 ```sh
+export RUN_MODE=dev
 uvicorn src.main:app --reload --log-config src/log_conf.yaml
 ```
 
 ### Локально - Docker Compose
 
 ```sh
+export RUN_MODE=dev
 docker compose up -d --build
 alembic upgrade head
 python3 -m src.scripts.seed
@@ -92,7 +95,8 @@ Alembic. При работе в Kubernetes в init-контейнере запу
 
 Да - проверка схем на бэкенде реализована с помощью валидации FastAPI и Pydantic.
 Интерфейсы для фронтэнда на TypeScript генерируются с помощью `openapi-ts`; компилятор
-TypeScript завершит работу с ошибкой при некорректном использовании типов.
+TypeScript завершит работу с ошибкой при некорректном использовании типов. В CI также
+встроена проверка на соответствие схем и миграций.
 
 ### 4 Балла (За каждый пункт 4/<кол-во пунктов> баллов)
 
@@ -129,7 +133,9 @@ TypeScript завершит работу с ошибкой при некорре
 
 - Установка зависимостей
 - Проверка качества кода линтером
+- Проверка сгенерированного кода
 - Запуск приложения в Docker Compose
+- Проверка миграций
 - Запуск автотестов
 - Сборка образов Docker и публикация в реестр GHCR
 
