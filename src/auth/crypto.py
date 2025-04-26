@@ -1,10 +1,10 @@
 from datetime import datetime, timedelta, timezone
 
 import bcrypt
+from fastapi import HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
 from jose.exceptions import ExpiredSignatureError, JWTError
-
 from src.settings import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
     ALGORITHM,
@@ -47,7 +47,7 @@ def get_new_access_token(refresh_token: str) -> str | None:
     """
     Issue a new access token using a refresh token.
 
-    If refresh token expired or invalid, return None.
+    If refresh token expired or invalid, raise appropriate HTTPException.
     """
 
     try:
@@ -58,5 +58,15 @@ def get_new_access_token(refresh_token: str) -> str | None:
         token_data = {"sub": username}
         new_access_token = create_access_token(data=token_data)
         return new_access_token
-    except (ExpiredSignatureError, JWTError):
-        return None
+    except ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token expired",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    except JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )

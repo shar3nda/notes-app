@@ -85,12 +85,8 @@ export interface components {
             username?: string | null;
             /** Password */
             password?: string | null;
-            /**
-             * Grant Type
-             * @default password
-             * @enum {string}
-             */
-            grant_type: "password" | "refresh_token";
+            /** Grant Type */
+            grant_type?: string | null;
             /** Refresh Token */
             refresh_token?: string | null;
         };

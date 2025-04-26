@@ -7,6 +7,7 @@ import {
   Input,
   Separator,
   Spinner,
+  Tag,
   Text,
   Textarea,
   VStack,
@@ -14,6 +15,8 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { $api } from "./api";
+import { login, register } from "./auth-api";
+import { clearTokens, getAccessToken } from "./auth";
 
 function NoteList({
   notes,
@@ -25,13 +28,14 @@ function NoteList({
   selectedNoteId: number | null;
 }) {
   return (
-    <VStack align="stretch" p={2} paddingTop={0} overflowY="auto" w="100%">
+    <VStack align="stretch" p={2} pt={0} overflowY="auto" w="100%">
       {notes.map((note) => {
         const isSelected = note.id === selectedNoteId;
         return (
           <Box
             key={note.id}
             p={3}
+            pb={1}
             borderRadius="md"
             borderWidth={1}
             bg={isSelected ? "bg.emphasized" : "bg"}
@@ -45,6 +49,11 @@ function NoteList({
             <Text fontSize="sm" lineClamp={1}>
               {note.content || "<No content>"}
             </Text>
+            <Tag.Root my={1}>
+              <Tag.Label>
+                Last modified: {new Date(note.updated_at).toLocaleString()}
+              </Tag.Label>
+            </Tag.Root>
           </Box>
         );
       })}
@@ -108,7 +117,7 @@ function NoteEditor({
   );
 }
 
-const App = () => {
+const NotesApp = () => {
   const queryClient = useQueryClient();
 
   const [selectedNote, setSelectedNote] = useState<NoteRead | null>(null);
@@ -150,15 +159,37 @@ const App = () => {
     setSelectedNote(null);
   };
 
-  if (isLoading) return <Spinner size="xl" />;
+  const handleLogout = () => {
+    clearTokens();
+    window.location.reload();
+  };
+
+  if (isLoading)
+    return (
+      <Flex flex={1} align="center" justify="center">
+        <Spinner size="xl" />
+      </Flex>
+    );
 
   return (
-    <>
-      <Flex h="100vh">
-        <VStack w="30%">
-          <Button onClick={handleCreate} marginTop={2}>
-            New Note
-          </Button>
+    <VStack w="100%" h="100vh">
+      <Flex
+        as="nav"
+        w="100%"
+        px={4}
+        pt={2}
+        pb={0}
+        align="center"
+        justify="space-between"
+      >
+        <Button onClick={handleCreate}>New Note</Button>
+        <Button onClick={handleLogout}>Log Out</Button>
+      </Flex>
+
+      <Separator orientation="horizontal" w="100%" />
+
+      <Flex w="100%" flex={1} overflow="hidden">
+        <VStack w="30%" overflowY="auto">
           {notes && (
             <NoteList
               notes={notes}
@@ -167,7 +198,6 @@ const App = () => {
             />
           )}
         </VStack>
-        <Separator orientation="vertical" />
         {selectedNote?.id ? (
           <NoteEditor
             noteId={selectedNote?.id}
@@ -181,6 +211,78 @@ const App = () => {
             </Text>
           </Flex>
         )}
+      </Flex>
+    </VStack>
+  );
+};
+
+const App = () => {
+  const [loggedIn, setLoggedIn] = useState(!!getAccessToken());
+  const [isRegister, setIsRegister] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleAuth = async () => {
+    try {
+      if (isRegister) {
+        await register(username, password);
+        toaster.create({ title: "Registered successfully!", type: "success" });
+      }
+      await login(username, password);
+      setLoggedIn(true);
+      toaster.create({ title: "Logged in!", type: "success" });
+    } catch (err) {
+      toaster.create({ title: `Authentication failed: ${err}`, type: "error" });
+    }
+  };
+
+  if (!loggedIn) {
+    return (
+      <>
+        <Flex
+          direction="column"
+          p={8}
+          gap={4}
+          maxW="400px"
+          m="auto"
+          as="form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleAuth();
+          }}
+        >
+          <Input
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <Input
+            placeholder="Password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Button onClick={handleAuth} type="submit">
+            {isRegister ? "Register" : "Login"}
+          </Button>
+          <Button
+            onClick={() => setIsRegister((r) => !r)}
+            variant="outline"
+            type="button"
+          >
+            {isRegister
+              ? "Already have an account? Log in"
+              : "No account? Register"}
+          </Button>
+        </Flex>
+        <Toaster />
+      </>
+    );
+  }
+  return (
+    <>
+      <Flex h="100vh">
+        <NotesApp />
       </Flex>
       <Toaster />
     </>

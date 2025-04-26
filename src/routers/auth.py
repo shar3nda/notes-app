@@ -45,13 +45,6 @@ async def login_for_access_token(
     if form_data.grant_type == "refresh_token":
         new_access_token = get_new_access_token(form_data.refresh_token)
 
-        if not new_access_token:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid refresh token",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-
         return Token(
             access_token=new_access_token,
             refresh_token=form_data.refresh_token,

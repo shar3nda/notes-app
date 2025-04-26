@@ -22,5 +22,5 @@ class UserRead(BaseModel):
 class AuthForm(BaseModel):
     username: str | None = None
     password: str | None = None
-    grant_type: Literal["password", "refresh_token"] = "password"
+    grant_type: str | None = None
     refresh_token: str | None = None
