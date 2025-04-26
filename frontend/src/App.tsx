@@ -44,7 +44,7 @@ function NoteList({
             onClick={() => onSelect(note)}
           >
             <Text fontWeight="bold" truncate>
-              {note.title || "Untitled"}
+              {note.title || "<Untitled>"}
             </Text>
             <Text fontSize="sm" lineClamp={1}>
               {note.content || "<No content>"}
